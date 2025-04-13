@@ -12,6 +12,7 @@ export interface Task {
   priority?: TaskPriority;
   deadline?: string;
   comments?: Comment[];
+  teamId?: string; // Add teamId to associate tasks with teams
 }
 
 export interface Comment {
@@ -22,6 +23,14 @@ export interface Comment {
   createdAt: string;
 }
 
+export interface Team {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  ownerId: string;
+}
+
 export interface TeamMember {
   id: string;
   name: string;
@@ -30,4 +39,10 @@ export interface TeamMember {
   role: "admin" | "member" | "viewer";
   status: "active" | "invited";
   joinedAt: string;
+  teamId: string; // Add teamId to associate members with teams
+}
+
+export interface UserTeams {
+  userId: string;
+  teams: Team[];
 }
