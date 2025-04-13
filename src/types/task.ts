@@ -21,3 +21,13 @@ export interface Comment {
   content: string;
   createdAt: string;
 }
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  role: "admin" | "member" | "viewer";
+  status: "active" | "invited";
+  joinedAt: string;
+}

@@ -4,7 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TaskBoard from "@/components/TaskBoard";
 import Header from "@/components/Header";
 import LoginForm from "@/components/LoginForm";
-import { Task, Comment } from "@/types/task";
+import TeamManagement from "@/components/TeamManagement";
+import { Task, Comment, TeamMember } from "@/types/task";
 import { toast } from "@/components/ui/use-toast";
 
 const Index = () => {
@@ -47,6 +48,33 @@ const Index = () => {
       priority: "low",
       deadline: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
       createdAt: new Date().toISOString(), 
+    },
+  ]);
+
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+    {
+      id: "current-user",
+      name: "You",
+      email: "you@example.com",
+      role: "admin",
+      status: "active",
+      joinedAt: new Date().toISOString(),
+    },
+    {
+      id: "member1",
+      name: "Alex Johnson",
+      email: "alex@example.com",
+      role: "member",
+      status: "active",
+      joinedAt: new Date(Date.now() - 86400000 * 10).toISOString(), // 10 days ago
+    },
+    {
+      id: "member2",
+      name: "Sam Taylor",
+      email: "sam@example.com",
+      role: "member",
+      status: "active",
+      joinedAt: new Date(Date.now() - 86400000 * 5).toISOString(), // 5 days ago
     },
   ]);
 
@@ -114,6 +142,43 @@ const Index = () => {
     });
   };
 
+  const handleInviteMember = (email: string, role: TeamMember["role"]) => {
+    // In a real app, this would send an invitation email
+    const newMember: TeamMember = {
+      id: Math.random().toString(36).substring(2, 9),
+      name: email.split('@')[0], // Simple placeholder name from email
+      email,
+      role,
+      status: "invited",
+      joinedAt: new Date().toISOString(),
+    };
+    
+    setTeamMembers([...teamMembers, newMember]);
+  };
+
+  const handleUpdateMemberRole = (memberId: string, role: TeamMember["role"]) => {
+    setTeamMembers(teamMembers.map(member => {
+      if (member.id === memberId) {
+        return { ...member, role };
+      }
+      return member;
+    }));
+    
+    toast({
+      title: "Role updated",
+      description: `Team member role has been updated to ${role}.`,
+    });
+  };
+
+  const handleRemoveMember = (memberId: string) => {
+    setTeamMembers(teamMembers.filter(member => member.id !== memberId));
+    
+    toast({
+      title: "Member removed",
+      description: "Team member has been removed from the team.",
+    });
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
@@ -136,6 +201,7 @@ const Index = () => {
           <TabsList className="mb-8">
             <TabsTrigger value="board">Board</TabsTrigger>
             <TabsTrigger value="list">List</TabsTrigger>
+            <TabsTrigger value="team">Team</TabsTrigger>
           </TabsList>
 
           <TabsContent value="board" className="w-full">
@@ -152,6 +218,16 @@ const Index = () => {
             <div className="animate-fade-in">
               <p className="text-muted-foreground">List view coming soon</p>
             </div>
+          </TabsContent>
+
+          <TabsContent value="team" className="w-full">
+            <TeamManagement
+              members={teamMembers}
+              onInviteMember={handleInviteMember}
+              onUpdateMemberRole={handleUpdateMemberRole}
+              onRemoveMember={handleRemoveMember}
+              currentUserId="current-user"
+            />
           </TabsContent>
         </Tabs>
       </main>
