@@ -12,9 +12,16 @@ interface TaskBoardProps {
   onCreateTask: (task: Omit<Task, "id" | "createdAt">) => void;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  onAddComment?: (taskId: string, content: string) => void;
 }
 
-const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, onCreateTask, onUpdateTask, onDeleteTask }) => {
+const TaskBoard: React.FC<TaskBoardProps> = ({ 
+  tasks, 
+  onCreateTask, 
+  onUpdateTask, 
+  onDeleteTask, 
+  onAddComment 
+}) => {
   const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   const todoTasks = tasks.filter(task => task.status === "todo");
@@ -46,6 +53,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, onCreateTask, onUpdateTask
           onStatusChange={handleStatusChange}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
+          onAddComment={onAddComment}
         />
         <TaskColumn 
           title="In Progress" 
@@ -54,6 +62,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, onCreateTask, onUpdateTask
           onStatusChange={handleStatusChange}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
+          onAddComment={onAddComment}
         />
         <TaskColumn 
           title="Done" 
@@ -62,6 +71,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, onCreateTask, onUpdateTask
           onStatusChange={handleStatusChange}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
+          onAddComment={onAddComment}
         />
       </div>
 

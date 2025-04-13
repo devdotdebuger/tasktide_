@@ -10,6 +10,7 @@ interface TaskColumnProps {
   onStatusChange: (task: Task, newStatus: TaskStatus) => void;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  onAddComment?: (taskId: string, content: string) => void;
 }
 
 const StatusColors = {
@@ -30,7 +31,8 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
   tasks, 
   onStatusChange,
   onUpdateTask,
-  onDeleteTask
+  onDeleteTask,
+  onAddComment
 }) => {
   return (
     <div className="kanban-column">
@@ -54,6 +56,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
               onStatusChange={onStatusChange}
               onUpdate={onUpdateTask}
               onDelete={onDeleteTask}
+              onAddComment={onAddComment}
             />
           ))
         )}

@@ -4,7 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TaskBoard from "@/components/TaskBoard";
 import Header from "@/components/Header";
 import LoginForm from "@/components/LoginForm";
-import { Task } from "@/types/task";
+import { Task, Comment } from "@/types/task";
+import { toast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,6 +16,17 @@ const Index = () => {
       description: "Create wireframes and high-fidelity mockups for the application.", 
       status: "todo", 
       assignee: "Alex",
+      priority: "high",
+      deadline: new Date(Date.now() + 86400000 * 3).toISOString(), // 3 days from now
+      comments: [
+        {
+          id: "comment1",
+          taskId: "1",
+          author: "Taylor",
+          content: "I think we should use a dark theme for the UI.",
+          createdAt: new Date().toISOString(),
+        }
+      ],
       createdAt: new Date().toISOString(),
     },
     { 
@@ -23,6 +35,7 @@ const Index = () => {
       description: "Add login, signup, and password reset functionality using Supabase Auth.", 
       status: "in-progress",
       assignee: "Sam",
+      priority: "medium",
       createdAt: new Date().toISOString(),
     },
     { 
@@ -31,6 +44,8 @@ const Index = () => {
       description: "Build the draggable kanban board interface for task management.", 
       status: "done",
       assignee: "Taylor",
+      priority: "low",
+      deadline: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
       createdAt: new Date().toISOString(), 
     },
   ]);
@@ -38,6 +53,10 @@ const Index = () => {
   const handleLogin = (email: string, password: string) => {
     console.log("Login with:", email, password);
     setIsAuthenticated(true);
+    toast({
+      title: "Logged in successfully",
+      description: `Welcome back!`,
+    });
   };
 
   const handleCreateTask = (task: Omit<Task, "id" | "createdAt">) => {
@@ -45,16 +64,54 @@ const Index = () => {
       ...task,
       id: Math.random().toString(36).substring(2, 9),
       createdAt: new Date().toISOString(),
+      comments: [],
     };
     setTasks([...tasks, newTask]);
+    toast({
+      title: "Task created",
+      description: `"${task.title}" has been added.`,
+    });
   };
 
   const handleUpdateTask = (updatedTask: Task) => {
     setTasks(tasks.map(task => task.id === updatedTask.id ? updatedTask : task));
+    toast({
+      title: "Task updated",
+      description: `"${updatedTask.title}" has been updated.`,
+    });
   };
 
   const handleDeleteTask = (taskId: string) => {
     setTasks(tasks.filter(task => task.id !== taskId));
+    toast({
+      title: "Task deleted",
+      description: "The task has been removed.",
+    });
+  };
+
+  const handleAddComment = (taskId: string, content: string) => {
+    const newComment: Comment = {
+      id: Math.random().toString(36).substring(2, 9),
+      taskId,
+      author: "You", // In a real app, this would be the current user
+      content,
+      createdAt: new Date().toISOString(),
+    };
+    
+    setTasks(tasks.map(task => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          comments: [...(task.comments || []), newComment]
+        };
+      }
+      return task;
+    }));
+    
+    toast({
+      title: "Comment added",
+      description: "Your comment has been added to the task.",
+    });
   };
 
   if (!isAuthenticated) {
@@ -87,6 +144,7 @@ const Index = () => {
               onCreateTask={handleCreateTask}
               onUpdateTask={handleUpdateTask}
               onDeleteTask={handleDeleteTask}
+              onAddComment={handleAddComment}
             />
           </TabsContent>
 
