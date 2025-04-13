@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Bell, LogOut, Menu, Plus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Team } from "@/types/task";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -86,6 +87,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
         
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="ghost" size="icon">
             <Bell size={18} />
           </Button>

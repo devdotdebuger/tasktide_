@@ -1,6 +1,7 @@
 
 export type TaskStatus = "todo" | "in-progress" | "done";
 export type TaskPriority = "low" | "medium" | "high";
+export type TaskLabel = "bug" | "feature" | "improvement" | "documentation" | "design" | "custom";
 
 export interface Task {
   id: string;
@@ -12,7 +13,17 @@ export interface Task {
   priority?: TaskPriority;
   deadline?: string;
   comments?: Comment[];
-  teamId?: string; // Add teamId to associate tasks with teams
+  teamId?: string;
+  labels?: TaskLabel[];
+  timeTracking?: {
+    estimated?: number; // in minutes
+    logged?: number; // in minutes
+  };
+  dependencies?: string[]; // Array of task IDs that this task depends on
+  customFields?: {
+    [key: string]: string | number | boolean;
+  };
+  templateId?: string;
 }
 
 export interface Comment {
@@ -29,6 +40,13 @@ export interface Team {
   description?: string;
   createdAt: string;
   ownerId: string;
+  customFields?: { 
+    id: string;
+    name: string;
+    type: "text" | "number" | "date" | "boolean" | "select";
+    options?: string[]; // For select type
+  }[];
+  templates?: TaskTemplate[];
 }
 
 export interface TeamMember {
@@ -39,10 +57,53 @@ export interface TeamMember {
   role: "admin" | "member" | "viewer";
   status: "active" | "invited";
   joinedAt: string;
-  teamId: string; // Add teamId to associate members with teams
+  teamId: string;
+  achievements?: Achievement[];
 }
 
 export interface UserTeams {
   userId: string;
   teams: Team[];
+}
+
+export interface TaskTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  teamId: string;
+  fields: {
+    title?: string;
+    description?: string;
+    priority?: TaskPriority;
+    labels?: TaskLabel[];
+    customFields?: {
+      [key: string]: string | number | boolean;
+    };
+  };
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  earnedAt: string;
+}
+
+export interface Analytics {
+  tasksCompleted: number;
+  tasksCreated: number;
+  averageCompletionTime: number; // in days
+  completionRate: number; // percentage
+  tasksByStatus: {
+    [key in TaskStatus]: number;
+  };
+  tasksByPriority: {
+    [key in TaskPriority]?: number;
+  };
+  memberPerformance: {
+    memberId: string;
+    tasksCompleted: number;
+    averageCompletionTime: number;
+  }[];
 }
