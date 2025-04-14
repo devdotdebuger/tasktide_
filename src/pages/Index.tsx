@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TaskBoard from "@/components/TaskBoard";
@@ -14,16 +13,19 @@ import {
   Team, 
   Message, 
   Conversation, 
-  Attachment 
+  Attachment,
+  UserProfile
 } from "@/types/task";
 import { toast } from "@/components/ui/use-toast";
+import ProfilePopover from "@/components/profile/ProfilePopover";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState({
+  const [currentUser, setCurrentUser] = useState<UserProfile>({
     id: "current-user",
     name: "You",
     email: "you@example.com",
+    avatar: "/lovable-uploads/avatars/default-avatar.png"
   });
 
   const [teams, setTeams] = useState<Team[]>([
@@ -213,6 +215,18 @@ const Index = () => {
     toast({
       title: "Logged in successfully",
       description: `Welcome back!`,
+    });
+  };
+
+  const handleUpdateProfile = (updatedProfile: Partial<UserProfile>) => {
+    setCurrentUser({
+      ...currentUser,
+      ...updatedProfile
+    });
+    
+    toast({
+      title: "Profile updated",
+      description: "Your profile has been updated successfully.",
     });
   };
 
@@ -528,20 +542,19 @@ const Index = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-pink-200 via-purple-100 to-rose-100 relative overflow-hidden">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-amber-700/20 via-amber-500/20 to-stone-900/40 relative overflow-hidden">
         {/* Background image */}
         <div 
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-80"
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-100"
           style={{ 
-            backgroundImage: `url('lovable-uploads/2c8b98f2-e1d0-4b34-9c0b-c33b6bc1ec40.png')`,
+            backgroundImage: `url('/lovable-uploads/39d5772c-6be3-4516-afe1-2cbd9de23b69.png')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'blur(0px)'
           }}
         />
 
         {/* Login form container */}
-        <div className="w-full max-w-md z-10 backdrop-blur-sm rounded-3xl overflow-hidden shadow-2xl bg-white bg-opacity-40">
+        <div className="w-full max-w-md z-10 backdrop-blur-sm rounded-3xl overflow-hidden shadow-2xl bg-white bg-opacity-10 border border-white/20">
           <LoginForm onLogin={handleLogin} />
         </div>
       </div>
@@ -561,6 +574,8 @@ const Index = () => {
         activeTeamId={activeTeamId}
         onTeamChange={setActiveTeamId}
         onCreateTeam={handleCreateTeam}
+        currentUser={currentUser}
+        onUpdateProfile={handleUpdateProfile}
       />
       <main className="flex-1 container py-6">
         <div className="mb-6">

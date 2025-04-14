@@ -1,8 +1,8 @@
 
 import React, { useState } from "react";
-import { Bell, LogOut, Menu, Plus, ChevronDown } from "lucide-react";
+import { Bell, LogOut, Menu, Plus, ChevronDown, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Team } from "@/types/task";
+import { Team, UserProfile } from "@/types/task";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   DropdownMenu,
@@ -20,6 +20,8 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import ProfilePopover from "@/components/profile/ProfilePopover";
 
 interface HeaderProps {
   onLogout: () => void;
@@ -27,6 +29,8 @@ interface HeaderProps {
   activeTeamId: string;
   onTeamChange: (teamId: string) => void;
   onCreateTeam: (name: string, description?: string) => void;
+  currentUser: UserProfile;
+  onUpdateProfile: (updatedProfile: Partial<UserProfile>) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -34,11 +38,14 @@ const Header: React.FC<HeaderProps> = ({
   teams, 
   activeTeamId, 
   onTeamChange,
-  onCreateTeam
+  onCreateTeam,
+  currentUser,
+  onUpdateProfile
 }) => {
   const [isCreateTeamDialogOpen, setIsCreateTeamDialogOpen] = useState(false);
   const [newTeamName, setNewTeamName] = useState("");
   const [newTeamDescription, setNewTeamDescription] = useState("");
+  const [showProfilePopover, setShowProfilePopover] = useState(false);
 
   const activeTeam = teams.find(team => team.id === activeTeamId);
 
@@ -91,9 +98,12 @@ const Header: React.FC<HeaderProps> = ({
           <Button variant="ghost" size="icon">
             <Bell size={18} />
           </Button>
-          <Button variant="ghost" size="icon" onClick={onLogout}>
-            <LogOut size={18} />
-          </Button>
+          
+          <ProfilePopover 
+            currentUser={currentUser}
+            onUpdateProfile={onUpdateProfile}
+            onLogout={onLogout}
+          />
         </div>
       </div>
       

@@ -1,4 +1,3 @@
-
 export type TaskStatus = "todo" | "in-progress" | "done";
 export type TaskPriority = "low" | "medium" | "high";
 export type TaskLabel = "bug" | "feature" | "improvement" | "documentation" | "design" | "custom";
@@ -133,4 +132,11 @@ export interface Conversation {
   participants: string[]; // Array of user IDs
   lastMessageAt: string;
   unreadCount: number;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
 }

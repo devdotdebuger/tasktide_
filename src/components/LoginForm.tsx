@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AtSign, Lock, PinterestIcon, ArrowRight } from "lucide-react";
+import { AtSign, Lock, ArrowRight, Github } from "lucide-react";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
@@ -62,13 +62,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
   return (
     <div className="w-full relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-pink-200 to-purple-300 opacity-30 rounded-3xl blur-xl -z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-amber-200/30 to-rose-300/30 opacity-30 rounded-3xl blur-xl -z-10"></div>
       
       <Tabs defaultValue="login" className="w-full">
         <div className="flex justify-between items-center py-4 px-6">
           <p className="text-sm text-muted-foreground">TaskTide_</p>
           <TabsList className="bg-transparent border-none shadow-none p-0">
-            {/* We'll style these buttons to look like the text in the image */}
             <TabsTrigger 
               value="login" 
               className="text-xl font-medium data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none px-2"
@@ -88,8 +87,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
           <div className="space-y-6">
             <div className="flex justify-end mb-4">
               <Button variant="outline" size="sm" className="rounded-full bg-white bg-opacity-80 border-none gap-2">
-                <PinterestIcon className="h-4 w-4" />
-                <span className="text-sm font-normal">Pinterest</span>
+                <Github className="h-4 w-4" />
+                <span className="text-sm font-normal">Github</span>
               </Button>
             </div>
             
@@ -135,10 +134,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                           />
                           <button 
                             type="button"
-                            onClick={() => {}}
+                            onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 bg-white rounded-full px-3 py-1 text-sm"
                           >
-                            I forgot
+                            {showPassword ? "Hide" : "Show"}
                           </button>
                         </div>
                       </FormControl>
@@ -148,14 +147,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 />
                 
                 <div className="text-xs text-muted-foreground py-4">
-                  <p>Tidak semua orang akan dengan kerendahan ada</p>
-                  <p>sebagian dari mereka nyaman dengan kesendiran dan</p>
-                  <p>hanya akan bercerita kepada orang laca sekurupanya.</p>
+                  <p>Securely access your tasks and team collaborations</p>
+                  <p>with our enhanced authentication system.</p>
                 </div>
                 
                 <div className="flex justify-between items-center pt-2">
                   <button type="button" className="text-sm text-muted-foreground hover:underline">
-                    Click here for more info.
+                    Forgot password?
                   </button>
                   <Button type="submit" size="icon" className="rounded-full h-12 w-12 bg-black hover:bg-gray-800">
                     <ArrowRight className="h-5 w-5" />
@@ -170,8 +168,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
           <div className="space-y-6">
             <div className="flex justify-end mb-4">
               <Button variant="outline" size="sm" className="rounded-full bg-white bg-opacity-80 border-none gap-2">
-                <PinterestIcon className="h-4 w-4" />
-                <span className="text-sm font-normal">Pinterest</span>
+                <Github className="h-4 w-4" />
+                <span className="text-sm font-normal">Github</span>
               </Button>
             </div>
             
@@ -237,6 +235,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                             className="pl-12 h-14 rounded-full bg-white bg-opacity-80 border-none"
                             {...field} 
                           />
+                          <button 
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white rounded-full px-3 py-1 text-sm"
+                          >
+                            {showPassword ? "Hide" : "Show"}
+                          </button>
                         </div>
                       </FormControl>
                       <FormMessage />
