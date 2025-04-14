@@ -4,11 +4,14 @@ import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TaskColumn from "@/components/TaskColumn";
 import TaskForm from "@/components/TaskForm";
-import { Task, TaskStatus } from "@/types/task";
+import { Task, TaskStatus, Team, TeamMember } from "@/types/task";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface TaskBoardProps {
   tasks: Task[];
+  team: Team;
+  teamTasks: Task[];
+  members: TeamMember[];
   onCreateTask: (task: Omit<Task, "id" | "createdAt">) => void;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
@@ -16,7 +19,10 @@ interface TaskBoardProps {
 }
 
 const TaskBoard: React.FC<TaskBoardProps> = ({ 
-  tasks, 
+  tasks,
+  team,
+  teamTasks,
+  members,
   onCreateTask, 
   onUpdateTask, 
   onDeleteTask, 
@@ -48,7 +54,10 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <TaskColumn 
           title="To Do" 
-          tasks={todoTasks} 
+          tasks={todoTasks}
+          team={team}
+          teamTasks={teamTasks}
+          members={members}
           status="todo"
           onStatusChange={handleStatusChange}
           onUpdateTask={onUpdateTask}
@@ -57,7 +66,10 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
         />
         <TaskColumn 
           title="In Progress" 
-          tasks={inProgressTasks} 
+          tasks={inProgressTasks}
+          team={team}
+          teamTasks={teamTasks}
+          members={members}
           status="in-progress"
           onStatusChange={handleStatusChange}
           onUpdateTask={onUpdateTask}
@@ -66,7 +78,10 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
         />
         <TaskColumn 
           title="Done" 
-          tasks={doneTasks} 
+          tasks={doneTasks}
+          team={team}
+          teamTasks={teamTasks}
+          members={members}
           status="done"
           onStatusChange={handleStatusChange}
           onUpdateTask={onUpdateTask}
@@ -82,7 +97,11 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
           </DialogHeader>
           <TaskForm 
             onSubmit={(taskData) => {
-              onCreateTask(taskData);
+              onCreateTask({
+                ...taskData,
+                title: taskData.title || '',
+                status: taskData.status || 'todo',
+              });
               setIsCreatingTask(false);
             }}
             onCancel={() => setIsCreatingTask(false)}
