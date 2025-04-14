@@ -4,9 +4,7 @@ A modern task management application built with React, TypeScript, and Supabase.
 
 ## 🌐 Live Preview
 
-Visit the live application: [https://tasktide.vercel.app](https://tasktide.vercel.app)
-
-[![Website Preview](public/preview.png)](https://tasktide.vercel.app)
+Visit the live application: [https://tasktide.vercel.app](https://tasktide-flow-sync-devdotdebugers-projects.vercel.app/))
 
 ## 🚀 Features
 
