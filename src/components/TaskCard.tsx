@@ -22,9 +22,9 @@ import { formatDate } from "@/lib/utils";
 
 interface TaskCardProps {
   task: Task;
-  teamTasks: Task[];
-  team: Team;
-  members: TeamMember[];
+  teamTasks?: Task[];
+  team?: Team;
+  members?: TeamMember[];
   onStatusChange: (task: Task, newStatus: TaskStatus) => void;
   onUpdate: (task: Task) => void;
   onDelete: (taskId: string) => void;
@@ -45,9 +45,9 @@ const priorityColors = {
 
 const TaskCard: React.FC<TaskCardProps> = ({ 
   task, 
-  teamTasks,
-  team,
-  members,
+  teamTasks = [],
+  team = { id: "", name: "", createdAt: "", ownerId: "" },
+  members = [],
   onStatusChange, 
   onUpdate, 
   onDelete, 

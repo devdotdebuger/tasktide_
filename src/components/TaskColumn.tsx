@@ -1,12 +1,15 @@
 
 import React from "react";
 import TaskCard from "@/components/TaskCard";
-import { Task, TaskStatus } from "@/types/task";
+import { Task, TaskStatus, Team, TeamMember } from "@/types/task";
 
 interface TaskColumnProps {
   title: string;
   status: TaskStatus;
   tasks: Task[];
+  team: Team;
+  teamTasks: Task[];
+  members: TeamMember[];
   onStatusChange: (task: Task, newStatus: TaskStatus) => void;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
@@ -29,6 +32,9 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
   title, 
   status, 
   tasks, 
+  team,
+  teamTasks,
+  members,
   onStatusChange,
   onUpdateTask,
   onDeleteTask,
@@ -53,6 +59,9 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
             <TaskCard 
               key={task.id} 
               task={task} 
+              teamTasks={teamTasks}
+              team={team}
+              members={members}
               onStatusChange={onStatusChange}
               onUpdate={onUpdateTask}
               onDelete={onDeleteTask}
