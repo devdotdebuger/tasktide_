@@ -4,7 +4,17 @@ import TaskBoard from "@/components/TaskBoard";
 import Header from "@/components/Header";
 import LoginForm from "@/components/LoginForm";
 import TeamManagement from "@/components/TeamManagement";
-import { Task, Comment, TeamMember, Team } from "@/types/task";
+import TaskList from "@/components/TaskList";
+import ConnectWithMember from "@/components/messaging/ConnectWithMember";
+import { 
+  Task, 
+  Comment, 
+  TeamMember, 
+  Team, 
+  Message, 
+  Conversation, 
+  Attachment 
+} from "@/types/task";
 import { toast } from "@/components/ui/use-toast";
 
 const Index = () => {
@@ -134,6 +144,66 @@ const Index = () => {
       joinedAt: new Date(Date.now() - 86400000 * 3).toISOString(), // 3 days ago
       teamId: "team2",
     },
+  ]);
+
+  const [conversations, setConversations] = useState<Conversation[]>([
+    {
+      id: "conv1",
+      participants: ["current-user", "member1"],
+      lastMessageAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+      unreadCount: 2,
+    },
+    {
+      id: "conv2",
+      participants: ["current-user", "member2"],
+      lastMessageAt: new Date(Date.now() - 86400000 * 3).toISOString(), // 3 days ago
+      unreadCount: 0,
+    }
+  ]);
+
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "msg1",
+      senderId: "member1",
+      receiverId: "current-user",
+      content: "Hi there! Could you review the new designs when you get a chance?",
+      createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+      read: false,
+    },
+    {
+      id: "msg2",
+      senderId: "member1",
+      receiverId: "current-user",
+      content: "I've attached the latest mockups for your feedback.",
+      attachments: [
+        {
+          id: "att1",
+          fileName: "homepage-design-v2.png",
+          fileType: "image/png",
+          fileSize: 2048000, // 2MB
+          url: "https://source.unsplash.com/random/800x600/?design",
+          uploadedAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+        }
+      ],
+      createdAt: new Date(Date.now() - 86400000 + 300000).toISOString(), // 1 day ago + 5 minutes
+      read: false,
+    },
+    {
+      id: "msg3",
+      senderId: "current-user",
+      receiverId: "member2",
+      content: "Hey Sam, how's the authentication implementation going?",
+      createdAt: new Date(Date.now() - 86400000 * 3).toISOString(), // 3 days ago
+      read: true,
+    },
+    {
+      id: "msg4",
+      senderId: "member2",
+      receiverId: "current-user",
+      content: "It's going well! I should be done by tomorrow. Need to finalize the error handling.",
+      createdAt: new Date(Date.now() - 86400000 * 3 + 600000).toISOString(), // 3 days ago + 10 minutes
+      read: true,
+    }
   ]);
 
   const handleLogin = (email: string, password: string) => {
@@ -327,6 +397,134 @@ const Index = () => {
     }
   };
 
+  const handleNewConversation = (participantId: string) => {
+    const existingConversation = conversations.find(conv => 
+      conv.participants.includes(participantId) && 
+      conv.participants.includes(currentUser.id)
+    );
+    
+    if (existingConversation) {
+      return existingConversation;
+    }
+    
+    const newConversation: Conversation = {
+      id: Math.random().toString(36).substring(2, 9),
+      participants: [currentUser.id, participantId],
+      lastMessageAt: new Date().toISOString(),
+      unreadCount: 0,
+    };
+    
+    setConversations([...conversations, newConversation]);
+    
+    return newConversation;
+  };
+  
+  const handleSendMessage = (conversationId: string, content: string, attachments: Attachment[]) => {
+    const conversation = conversations.find(conv => conv.id === conversationId);
+    
+    if (!conversation) return;
+    
+    const receiverId = conversation.participants.find(id => id !== currentUser.id);
+    
+    if (!receiverId) return;
+    
+    const newMessage: Message = {
+      id: Math.random().toString(36).substring(2, 9),
+      senderId: currentUser.id,
+      receiverId,
+      content,
+      attachments: attachments.length > 0 ? [...attachments] : undefined,
+      createdAt: new Date().toISOString(),
+      read: false,
+    };
+    
+    setMessages([...messages, newMessage]);
+    
+    setConversations(conversations.map(conv => {
+      if (conv.id === conversationId) {
+        return {
+          ...conv,
+          lastMessageAt: new Date().toISOString(),
+        };
+      }
+      return conv;
+    }));
+    
+    if (Math.random() > 0.5) {
+      setTimeout(() => {
+        const replyMessage: Message = {
+          id: Math.random().toString(36).substring(2, 9),
+          senderId: receiverId,
+          receiverId: currentUser.id,
+          content: getRandomReply(),
+          createdAt: new Date().toISOString(),
+          read: false,
+        };
+        
+        setMessages(prev => [...prev, replyMessage]);
+        
+        setConversations(prev => 
+          prev.map(conv => {
+            if (conv.id === conversationId) {
+              return {
+                ...conv,
+                lastMessageAt: new Date().toISOString(),
+                unreadCount: conv.unreadCount + 1,
+              };
+            }
+            return conv;
+          })
+        );
+        
+        toast({
+          title: "New message",
+          description: `${teamMembers.find(m => m.id === receiverId)?.name} replied to your message`,
+        });
+      }, 2000);
+    }
+  };
+  
+  const handleMarkAsRead = (conversationId: string) => {
+    setConversations(conversations.map(conv => {
+      if (conv.id === conversationId) {
+        return {
+          ...conv,
+          unreadCount: 0,
+        };
+      }
+      return conv;
+    }));
+    
+    setMessages(messages.map(msg => {
+      const otherParticipantId = conversations
+        .find(conv => conv.id === conversationId)
+        ?.participants.find(id => id !== currentUser.id);
+        
+      if (msg.senderId === otherParticipantId && msg.receiverId === currentUser.id && !msg.read) {
+        return {
+          ...msg,
+          read: true,
+        };
+      }
+      return msg;
+    }));
+  };
+  
+  const getRandomReply = () => {
+    const replies = [
+      "Thanks for the update!",
+      "Got it, I'll take a look.",
+      "Sounds good to me.",
+      "Let me know if you need anything else.",
+      "Perfect! Thanks for your help.",
+      "I'll get back to you on that soon.",
+      "That works for me.",
+      "Great progress!",
+    ];
+    
+    return replies[Math.floor(Math.random() * replies.length)];
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
@@ -344,6 +542,7 @@ const Index = () => {
   const activeTeamTasks = tasks.filter(task => task.teamId === activeTeamId);
   const activeTeamMembers = teamMembers.filter(member => member.teamId === activeTeamId);
   const activeTeam = teams.find(team => team.id === activeTeamId);
+  const allMembers = teamMembers.filter(member => member.id !== currentUser.id);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -365,6 +564,7 @@ const Index = () => {
             <TabsTrigger value="board">Board</TabsTrigger>
             <TabsTrigger value="list">List</TabsTrigger>
             <TabsTrigger value="team">Team</TabsTrigger>
+            <TabsTrigger value="connect">Connect</TabsTrigger>
           </TabsList>
 
           <TabsContent value="board" className="w-full">
@@ -378,9 +578,15 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="list">
-            <div className="animate-fade-in">
-              <p className="text-muted-foreground">List view coming soon</p>
-            </div>
+            {activeTeam && (
+              <TaskList 
+                tasks={activeTeamTasks} 
+                team={activeTeam}
+                members={activeTeamMembers}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="team" className="w-full">
@@ -394,6 +600,19 @@ const Index = () => {
               onJoinTeam={handleJoinTeam}
               onDeleteTeam={handleDeleteTeam}
               currentUserId={currentUser.id}
+            />
+          </TabsContent>
+          
+          <TabsContent value="connect" className="w-full">
+            <ConnectWithMember
+              currentUserId={currentUser.id}
+              teams={teams}
+              members={allMembers}
+              conversations={conversations}
+              messages={messages}
+              onNewConversation={handleNewConversation}
+              onSendMessage={handleSendMessage}
+              onMarkAsRead={handleMarkAsRead}
             />
           </TabsContent>
         </Tabs>

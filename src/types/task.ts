@@ -107,3 +107,30 @@ export interface Analytics {
     averageCompletionTime: number;
   }[];
 }
+
+// New messaging types
+export interface Message {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  attachments?: Attachment[];
+  createdAt: string;
+  read: boolean;
+}
+
+export interface Attachment {
+  id: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number; // in bytes
+  url: string; // This would be a data URL for our demo
+  uploadedAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  participants: string[]; // Array of user IDs
+  lastMessageAt: string;
+  unreadCount: number;
+}
