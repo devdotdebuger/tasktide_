@@ -1,73 +1,121 @@
-# Welcome to your Lovable project
+# TaskTide
 
-## Project info
+A modern task management application built with React, TypeScript, and Supabase.
 
-**URL**: https://lovable.dev/projects/e802b98a-e386-4033-8e81-08acd2951be5
+## 🌐 Live Preview
 
-## How can I edit this code?
+Visit the live application: [https://tasktide.vercel.app](https://tasktide.vercel.app)
 
-There are several ways of editing your application.
+[![Website Preview](public/preview.png)](https://tasktide.vercel.app)
 
-**Use Lovable**
+## 🚀 Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e802b98a-e386-4033-8e81-08acd2951be5) and start prompting.
+- User authentication and authorization
+- Team collaboration
+- Task management
+- Real-time updates
+- File attachments
+- Team messaging
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tech Stack
 
-**Use your preferred IDE**
+- **Frontend Framework:** React with TypeScript
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS + shadcn/ui
+- **Backend/Database:** Supabase
+- **Real-time:** Supabase Realtime
+- **Authentication:** Supabase Auth
+- **File Storage:** Supabase Storage
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📦 Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/tasktide.git
+cd tasktide
+```
 
-Follow these steps:
+2. Install dependencies:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Set up environment variables:
+```bash
+cp .env.example .env
+```
+Edit `.env` with your Supabase credentials:
+```
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🗄️ Database Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The application uses the following main tables in Supabase:
 
-**Use GitHub Codespaces**
+- `users` - User accounts and profiles
+- `teams` - Teams that users can create and join
+- `team_members` - Mapping between users and teams
+- `tasks` - Task information
+- `comments` - Comments on tasks
+- `conversations` - Messaging conversations
+- `messages` - Individual messages
+- `attachments` - Files attached to messages or tasks
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🔐 Authentication
 
-## What technologies are used for this project?
+TaskTide uses Supabase Auth for user authentication. The Row Level Security (RLS) policies ensure:
 
-This project is built with:
+- Users can only view and modify their own data
+- Team members can view team data
+- Team admins can manage team data and members
+- Task creators and assignees have special permissions
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Deployment
 
-## How can I deploy this project?
+1. Build the project:
+```bash
+npm run build
+```
 
-Simply open [Lovable](https://lovable.dev/projects/e802b98a-e386-4033-8e81-08acd2951be5) and click on Share -> Publish.
+2. Preview the build:
+```bash
+npm run preview
+```
 
-## Can I connect a custom domain to my Lovable project?
+3. Deploy to your preferred hosting platform (Vercel, Netlify, etc.)
 
-Yes, you can!
+## 🧪 Running Tests
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```bash
+npm run test
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 📝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Authors
+
+- Your Name - Initial work - [YourGitHub](https://github.com/yourusername)
+
+## 🙏 Acknowledgments
+
+- [Supabase](https://supabase.com/) - Backend as a Service
+- [Vite](https://vitejs.dev/) - Frontend Build Tool
+- [shadcn/ui](https://ui.shadcn.com/) - UI Components
+
