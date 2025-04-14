@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TaskBoard from "@/components/TaskBoard";
@@ -527,12 +528,20 @@ const Index = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">TaskTide</h1>
-            <p className="text-muted-foreground">Minimal team task management</p>
-          </div>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-pink-200 via-purple-100 to-rose-100 relative overflow-hidden">
+        {/* Background image */}
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-80"
+          style={{ 
+            backgroundImage: `url('lovable-uploads/2c8b98f2-e1d0-4b34-9c0b-c33b6bc1ec40.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(0px)'
+          }}
+        />
+
+        {/* Login form container */}
+        <div className="w-full max-w-md z-10 backdrop-blur-sm rounded-3xl overflow-hidden shadow-2xl bg-white bg-opacity-40">
           <LoginForm onLogin={handleLogin} />
         </div>
       </div>

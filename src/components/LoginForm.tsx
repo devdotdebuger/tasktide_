@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -9,11 +9,11 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AtSign, Lock, PinterestIcon, ArrowRight } from "lucide-react";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
@@ -32,6 +32,8 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -59,124 +61,207 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   };
 
   return (
-    <Tabs defaultValue="login" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 mb-6">
-        <TabsTrigger value="login">Login</TabsTrigger>
-        <TabsTrigger value="signup">Sign up</TabsTrigger>
-      </TabsList>
+    <div className="w-full relative">
+      <div className="absolute inset-0 bg-gradient-to-r from-pink-200 to-purple-300 opacity-30 rounded-3xl blur-xl -z-10"></div>
       
-      <TabsContent value="login" className="animate-fade-in">
-        <div className="space-y-6 bg-card border border-border p-6 rounded-lg shadow-sm">
-          <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-semibold">Welcome back</h1>
-            <p className="text-sm text-muted-foreground">Enter your credentials to access your account</p>
-          </div>
-          
-          <Form {...loginForm}>
-            <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-4">
-              <FormField
-                control={loginForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="name@company.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={loginForm.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </form>
-          </Form>
-          
-          <div className="text-center text-sm">
-            <a className="text-primary hover:underline cursor-pointer">Forgot password?</a>
-          </div>
+      <Tabs defaultValue="login" className="w-full">
+        <div className="flex justify-between items-center py-4 px-6">
+          <p className="text-sm text-muted-foreground">TaskTide_</p>
+          <TabsList className="bg-transparent border-none shadow-none p-0">
+            {/* We'll style these buttons to look like the text in the image */}
+            <TabsTrigger 
+              value="login" 
+              className="text-xl font-medium data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none px-2"
+            >
+              Log in
+            </TabsTrigger>
+            <TabsTrigger 
+              value="signup" 
+              className="text-xl font-medium data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none px-2"
+            >
+              Sign up
+            </TabsTrigger>
+          </TabsList>
         </div>
-      </TabsContent>
-      
-      <TabsContent value="signup" className="animate-fade-in">
-        <div className="space-y-6 bg-card border border-border p-6 rounded-lg shadow-sm">
-          <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-semibold">Create an account</h1>
-            <p className="text-sm text-muted-foreground">Enter your details to create a new account</p>
-          </div>
-          
-          <Form {...signupForm}>
-            <form onSubmit={signupForm.handleSubmit(handleSignupSubmit)} className="space-y-4">
-              <FormField
-                control={signupForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={signupForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="name@company.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={signupForm.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <Button type="submit" className="w-full">
-                Create account
+        
+        <TabsContent value="login" className="px-6 pt-2 pb-6 animate-fade-in">
+          <div className="space-y-6">
+            <div className="flex justify-end mb-4">
+              <Button variant="outline" size="sm" className="rounded-full bg-white bg-opacity-80 border-none gap-2">
+                <PinterestIcon className="h-4 w-4" />
+                <span className="text-sm font-normal">Pinterest</span>
               </Button>
-            </form>
-          </Form>
-          
-          <div className="text-center text-xs text-muted-foreground">
-            By creating an account, you agree to our <a className="text-primary hover:underline cursor-pointer">Terms of Service</a> and <a className="text-primary hover:underline cursor-pointer">Privacy Policy</a>
+            </div>
+            
+            <Form {...loginForm}>
+              <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-4">
+                <FormField
+                  control={loginForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2">
+                            <AtSign className="h-4 w-4 text-gray-500" />
+                          </div>
+                          <Input 
+                            placeholder="e-mail address" 
+                            className="pl-12 h-14 rounded-full bg-white bg-opacity-80 border-none"
+                            {...field} 
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2">
+                            <Lock className="h-4 w-4 text-gray-500" />
+                          </div>
+                          <Input 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="password" 
+                            className="pl-12 h-14 rounded-full bg-white bg-opacity-80 border-none"
+                            {...field} 
+                          />
+                          <button 
+                            type="button"
+                            onClick={() => {}}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white rounded-full px-3 py-1 text-sm"
+                          >
+                            I forgot
+                          </button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="text-xs text-muted-foreground py-4">
+                  <p>Tidak semua orang akan dengan kerendahan ada</p>
+                  <p>sebagian dari mereka nyaman dengan kesendiran dan</p>
+                  <p>hanya akan bercerita kepada orang laca sekurupanya.</p>
+                </div>
+                
+                <div className="flex justify-between items-center pt-2">
+                  <button type="button" className="text-sm text-muted-foreground hover:underline">
+                    Click here for more info.
+                  </button>
+                  <Button type="submit" size="icon" className="rounded-full h-12 w-12 bg-black hover:bg-gray-800">
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </div>
-        </div>
-      </TabsContent>
-    </Tabs>
+        </TabsContent>
+        
+        <TabsContent value="signup" className="px-6 pt-2 pb-6 animate-fade-in">
+          <div className="space-y-6">
+            <div className="flex justify-end mb-4">
+              <Button variant="outline" size="sm" className="rounded-full bg-white bg-opacity-80 border-none gap-2">
+                <PinterestIcon className="h-4 w-4" />
+                <span className="text-sm font-normal">Pinterest</span>
+              </Button>
+            </div>
+            
+            <Form {...signupForm}>
+              <form onSubmit={signupForm.handleSubmit(handleSignupSubmit)} className="space-y-4">
+                <FormField
+                  control={signupForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2">
+                            <AtSign className="h-4 w-4 text-gray-500" />
+                          </div>
+                          <Input 
+                            placeholder="full name" 
+                            className="pl-12 h-14 rounded-full bg-white bg-opacity-80 border-none"
+                            {...field} 
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={signupForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2">
+                            <AtSign className="h-4 w-4 text-gray-500" />
+                          </div>
+                          <Input 
+                            placeholder="e-mail address" 
+                            className="pl-12 h-14 rounded-full bg-white bg-opacity-80 border-none"
+                            {...field} 
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={signupForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2">
+                            <Lock className="h-4 w-4 text-gray-500" />
+                          </div>
+                          <Input 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="password" 
+                            className="pl-12 h-14 rounded-full bg-white bg-opacity-80 border-none"
+                            {...field} 
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="text-xs text-muted-foreground py-4">
+                  <p>By creating an account, you agree to our Terms of Service and Privacy Policy.</p>
+                </div>
+                
+                <div className="flex justify-between items-center pt-2">
+                  <button type="button" className="text-sm text-muted-foreground hover:underline">
+                    Already have an account?
+                  </button>
+                  <Button type="submit" size="icon" className="rounded-full h-12 w-12 bg-black hover:bg-gray-800">
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
