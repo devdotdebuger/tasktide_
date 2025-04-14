@@ -3,54 +3,175 @@
 
 This directory contains SQL files for setting up the TaskTide database in Supabase.
 
-## Setup Order
+## 📁 Files Structure
 
-1. Run `schema.sql` to create the database tables and relationships
-2. Run `rls_policies.sql` to set up Row Level Security policies
-3. Run `functions.sql` to create database functions and triggers
+- `schema.sql` - Database tables and relationships
+- `rls_policies.sql` - Row Level Security policies
+- `functions.sql` - Database functions and triggers
+- `seed.sql` - Sample data for development
 
-## Database Structure
+## 🚀 Setup Instructions
 
-The TaskTide database consists of the following main tables:
+1. Create a new Supabase project at [supabase.com](https://supabase.com)
+2. Navigate to the SQL editor in your Supabase dashboard
+3. Execute the SQL files in the following order:
+   ```bash
+   1. schema.sql     # Creates tables and relationships
+   2. rls_policies.sql   # Sets up security policies
+   3. functions.sql  # Creates helper functions
+   4. seed.sql      # (Optional) Adds sample data
+   ```
 
-- `users` - User accounts and profiles
-- `teams` - Teams that users can create and join
-- `team_members` - Mapping between users and teams
-- `tasks` - Task information
-- `comments` - Comments on tasks
-- `conversations` - Messaging conversations
-- `messages` - Individual messages
-- `attachments` - Files attached to messages or tasks
+## 📊 Database Structure
 
-## Authentication
+### Core Tables
 
-TaskTide uses Supabase Auth for user authentication. The RLS policies are designed to work with Supabase Auth, using the `auth.user_id()` function to get the current user's ID.
+#### `users`
+- User accounts and profiles
+- Contains: id, email, username, password_hash, avatar
+- Protected by RLS for user-specific access
 
-## Row Level Security
+#### `teams`
+- Teams that users can create and join
+- Contains: id, name, description, owner_id
+- RLS ensures team member access only
 
-All tables have RLS policies that restrict access based on user permissions:
+#### `team_members`
+- Maps users to teams with roles
+- Contains: team_id, user_id, role
+- Controls team access permissions
 
-- Users can only view and modify their own data
-- Team members can view team data
-- Team admins can manage team data and members
-- Task creators and assignees have special permissions for their tasks
+#### `tasks`
+- Task information and metadata
+- Contains: id, title, description, status, assignee_id
+- RLS based on team membership and assignment
 
-## Database Functions
+#### `comments`
+- Comments on tasks
+- Contains: id, task_id, user_id, content
+- Access controlled by task visibility
 
-Several helper functions are provided to simplify common operations:
+#### `conversations`
+- Messaging conversations
+- Contains: id, type (direct/group)
+- RLS based on conversation participation
 
-- `create_team_with_owner` - Creates a new team and automatically adds the creator as admin
-- `invite_user_to_team` - Sends a team invitation to a user
-- `accept_team_invitation` - Accepts a team invitation
-- `assign_task` - Assigns a task to a team member
-- `create_direct_message_conversation` - Creates or finds a direct message conversation
-- `send_message` - Sends a message and updates conversation metadata
-- `mark_conversation_as_read` - Marks all messages in a conversation as read
+#### `messages`
+- Individual messages within conversations
+- Contains: id, conversation_id, sender_id, content
+- Protected by conversation membership
 
-## Triggers
+#### `attachments`
+- Files attached to messages or tasks
+- Contains: id, file_url, content_type
+- Access follows parent resource permissions
 
-Automatic triggers handle:
+## 🔐 Security Model
 
-- Updating timestamps when records are modified
-- Checking for achievements when tasks are completed
-- Sending notifications for various events
+### Row Level Security (RLS)
+
+All tables have RLS policies that restrict access based on:
+- User authentication status
+- Team membership
+- Resource ownership
+- Role-based permissions
+
+### Authentication
+
+- Uses Supabase Auth
+- JWT tokens for session management
+- `auth.user_id()` for user context
+
+### Key Policies
+
+1. **Users**
+   - Public read for basic profiles
+   - Self-only update access
+
+2. **Teams**
+   - Read access for team members
+   - Update access for team admins
+   - Delete access for team owners
+
+3. **Tasks**
+   - Read access for team members
+   - Create/Update for assignees and creators
+   - Delete for task creators and team admins
+
+4. **Messages**
+   - Read/Write access for conversation participants only
+
+## 🛠️ Database Functions
+
+### Helper Functions
+
+1. `create_team_with_owner(team_name, owner_id)`
+   - Creates team and adds owner as admin
+
+2. `invite_user_to_team(team_id, user_email)`
+   - Sends team invitation
+
+3. `accept_team_invitation(invitation_id)`
+   - Processes team join acceptance
+
+4. `assign_task(task_id, assignee_id)`
+   - Updates task assignment with checks
+
+5. `create_direct_message_conversation(user1_id, user2_id)`
+   - Creates or finds DM conversation
+
+### Triggers
+
+1. **Timestamp Updates**
+   - Automatically updates `updated_at`
+   - Applies to all relevant tables
+
+2. **Notification Triggers**
+   - Task assignments
+   - Comment additions
+   - Message notifications
+
+3. **Achievement Tracking**
+   - Task completion milestones
+   - Team contribution tracking
+
+## 📝 Development Guidelines
+
+1. Always test RLS policies thoroughly
+2. Use prepared statements for dynamic SQL
+3. Include appropriate indexes
+4. Document any schema changes
+5. Follow naming conventions:
+   - Tables: plural, lowercase, underscore
+   - Functions: verb_noun format
+   - Triggers: table_action_trigger
+
+## 🔄 Migration Process
+
+1. Create new migration file:
+   ```sql
+   -- migrations/YYYYMMDD_description.sql
+   ```
+2. Test locally using Supabase CLI
+3. Apply to development environment
+4. Review and test thoroughly
+5. Apply to production
+
+## 🐛 Troubleshooting
+
+Common issues and solutions:
+1. RLS Policy Issues
+   - Check `auth.uid()` availability
+   - Verify policy conditions
+2. Performance Problems
+   - Review query plans
+   - Check index usage
+3. Function Errors
+   - Validate parameter types
+   - Check return values
+
+## 📚 Resources
+
+- [Supabase Documentation](https://supabase.com/docs)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [PostgREST Documentation](https://postgrest.org/en/stable/)
