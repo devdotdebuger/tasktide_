@@ -1,16 +1,7 @@
-// src/components/Profile.tsx
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { useSupabase } from '@/contexts/SupabaseContext';
 
 function Profile() {
-  const [user, setUser] = useState<any>(null)
-
-  useEffect(() => {
-    const session = supabase.auth.getSession()
-    session.then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
-  }, [])
+  const { user } = useSupabase();
 
   return (
     <div className="text-white p-4">
@@ -20,7 +11,7 @@ function Profile() {
         <p>You are not logged in.</p>
       )}
     </div>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

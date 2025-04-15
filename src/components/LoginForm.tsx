@@ -14,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AtSign, Lock, ArrowRight, Github } from "lucide-react";
+import { useSupabase } from "@/contexts/SupabaseContext";
+import { toast } from "@/components/ui/use-toast";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
@@ -31,7 +33,8 @@ const signupSchema = loginSchema.extend({
 type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
+const LoginForm: React.FC = () => {
+  const { signIn } = useSupabase();
   const [showPassword, setShowPassword] = useState(false);
 
   const loginForm = useForm<LoginFormValues>({
@@ -51,8 +54,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     },
   });
 
-  const handleLoginSubmit = (data: LoginFormValues) => {
-    onLogin(data.email, data.password);
+  const handleLoginSubmit = async (data: LoginFormValues) => {
+    try {
+      await signIn(data.email, data.password);
+      toast({
+        title: "Logged in successfully",
+        description: "Welcome back!",
+      });
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSignupSubmit = (data: SignupFormValues) => {
